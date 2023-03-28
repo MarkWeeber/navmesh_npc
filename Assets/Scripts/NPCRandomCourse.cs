@@ -1,43 +1,77 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Linq;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class NPCRandomCourse : MonoBehaviour
 {
     [SerializeField] private float minCourseRange = 5f;
     [SerializeField] private float maxCourseRange = 15f;
-    [SerializeField] private float minRestSeconds = 12f;
-    [SerializeField] private float maxRestSeconds = 19f;
-    [SerializeField] private bool waitAtLaunch = false;
+    [SerializeField] private float minRestSeconds = 3f;
+    [SerializeField] private float maxRestSeconds = 5f;
+    [SerializeField] private bool waitAtLaunch = true;
 
     private bool targetReached;
-    private bool launched = false;
+    private float setCourseTimer;
     private float distnaceToTarget = 0f;
     private NavMeshAgent agent;
     private NavMeshPath navMeshPath;
-    private float setCourseTime;
-
+    private Vector3 destination;
+    private float[] distanceToTargetArray;
+    private int arrayIndex = 0;
+    private PreservedDestinations preservedDestinations;
 
     private void Start()
     {
+        preservedDestinations = GetComponentInParent<PreservedDestinations>();
         agent = GetComponent<NavMeshAgent>();
         navMeshPath = new NavMeshPath();
-        targetReached = false;
+        distanceToTargetArray = new float[3] { -1, -1, -1 };
+        if (waitAtLaunch)
+        {
+            setCourseTimer = Random.Range(minRestSeconds, maxRestSeconds);
+        }
+        else
+        {
+            setCourseTimer = 0;
+        }
     }
 
     private void Update()
     {
-        CircleCourse();
+        CheckIfDestinationIsReached();
         if (targetReached)
         {
-            
+            if(setCourseTimer > 0)
+            {
+                setCourseTimer -= Time.deltaTime;
+            }
+            else
+            {
+                SetNextCourse();
+                setCourseTimer = Random.Range(minRestSeconds, maxRestSeconds);
+            }
         }
     }
 
-    private void CircleCourse()
+    private void SetNextCourse()
+    {
+        if (RetreiveRandomPoint(this.transform.position, minCourseRange, maxCourseRange, out destination))
+        {
+            agent.SetDestination(destination);
+        }
+    }
+
+    private void CheckIfDestinationIsReached()
     {
         distnaceToTarget = Vector3.Distance(this.transform.position, agent.destination);
-        if(distnaceToTarget == 1)
+        if(arrayIndex == distanceToTargetArray.Length)
+        {
+            arrayIndex = 0;
+        }
+        distanceToTargetArray[arrayIndex] = distnaceToTarget;
+        arrayIndex++;
+        if(distanceToTargetArray.Distinct().Count() == 1)
         {
             targetReached = true;
         }
@@ -47,7 +81,7 @@ public class NPCRandomCourse : MonoBehaviour
         }
     }
 
-    private bool RandomPoint(Vector3 center, float minRange, float maxRange, out Vector3 result)
+    private bool RetreiveRandomPoint(Vector3 center, float minRange, float maxRange, out Vector3 result)
     {
         for (int i = 0; i < 30; i++)
         {
@@ -57,8 +91,14 @@ public class NPCRandomCourse : MonoBehaviour
             {
                 if (agent.CalculatePath(hit.position, navMeshPath) && navMeshPath.status == NavMeshPathStatus.PathComplete)
                 {
-                    result = hit.position;
-                    return true;
+                    if (!OmitSpaces.PositionIsWithinOmitSpace(hit.position))
+                    {
+                        if (preservedDestinations.AddLocation(this, hit.position, agent.radius * 2.5f))
+                        {
+                            result = hit.position;
+                            return true;
+                        }
+                    }
                 }
             }
         }

@@ -4,7 +4,7 @@ using UnityEngine;
 public class OmitSpaces : MonoBehaviour
 {
     public static OmitSpaces instance;
-    private List<BoxCollider> omitSpaces;
+    private static List<BoxCollider> omitSpaces;
     [SerializeField] private LayerMask omitMask = 0;
     private void Awake()
     {
@@ -34,10 +34,16 @@ public class OmitSpaces : MonoBehaviour
         return ans;
     }
 
-    public static bool WithinOmitSpace()
+    public static bool PositionIsWithinOmitSpace(Vector3 checkPosition)
     {
         bool ans = false;
-
+        foreach (BoxCollider _item in omitSpaces)
+        {
+            if (_item.bounds.Contains(checkPosition))
+            {
+                ans = true;
+            }
+        }
         return ans;
     }
 

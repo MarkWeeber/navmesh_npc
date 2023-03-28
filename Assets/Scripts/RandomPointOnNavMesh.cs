@@ -26,8 +26,11 @@ public class RandomPointOnNavMesh : MonoBehaviour
                 {
                     if (agent.CalculatePath(hit.position, navMeshPath) && navMeshPath.status == NavMeshPathStatus.PathComplete)
                     {
-                        result = hit.position;
-                        return true;
+                        if (!OmitSpaces.PositionIsWithinOmitSpace(hit.position))
+                        {
+                            result = hit.position;
+                            return true;
+                        }
                     }
                 }
                 else
