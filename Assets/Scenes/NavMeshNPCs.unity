@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.46066707, g: 0.5017246, b: 0.55335605, a: 1}
+  m_IndirectSpecularColor: {r: 0.4534908, g: 0.49628073, b: 0.5498439, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6192,6 +6192,10 @@ PrefabInstance:
     - target: {fileID: 4649235428505878171, guid: 6e0ae356eecd6e54c9e8a8ff72c125d7, type: 3}
       propertyPath: m_Name
       value: TestNPC
+      objectReference: {fileID: 0}
+    - target: {fileID: 4649235428505878171, guid: 6e0ae356eecd6e54c9e8a8ff72c125d7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9007208805259919577, guid: 6e0ae356eecd6e54c9e8a8ff72c125d7, type: 3}
       propertyPath: target
@@ -28512,6 +28516,10 @@ PrefabInstance:
     - target: {fileID: 369594604553816364, guid: 7e8795a346e3608439cbbf4c32363aad, type: 3}
       propertyPath: m_Name
       value: TestTarget
+      objectReference: {fileID: 0}
+    - target: {fileID: 369594604553816364, guid: 7e8795a346e3608439cbbf4c32363aad, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 369594604553816365, guid: 7e8795a346e3608439cbbf4c32363aad, type: 3}
       propertyPath: m_RootOrder
